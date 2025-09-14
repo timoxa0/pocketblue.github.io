@@ -1,0 +1,25 @@
+on:
+  - push
+  - pull_request
+jobs:
+  flatpak-build:
+    secrets: inherit
+    strategy:
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        flatpak:
+          - name: handyfox
+            id: io.github.pocketblue.handyfox
+          - name: firefox-systemconfig
+            id: org.mozilla.firefox.systemconfig
+    uses: ./.github/workflows/flatpak-build.yml
+    with:
+      runner: ${{ matrix.runner}}
+      name: ${{ matrix.flatpak.name }}
+      id: ${{ matrix.flatpak.id }}
+  push_repo:
+    permissions:
+      contents: write
+    secrets: inherit
+    needs: flatpak-build
+    uses: ./.github/workflows/deploy-repo.yml
