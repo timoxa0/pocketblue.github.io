@@ -11,7 +11,7 @@ jobs:
         flatpak:
           - id: io.github.pocketblue.handyfox
             name: handyfox
-          - id: org.mozilla.firefox.systemconfig.yml
+          - id: org.mozilla.firefox.systemconfig
             name: firefox-systemconfig
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-24.08
