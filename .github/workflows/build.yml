@@ -25,7 +25,7 @@ jobs:
           echo '${{ secrets.private_gpg }}' | gpg --import
           git clone 'https://github.com/pocketblue/${{ matrix.flatpak.name }}'
           flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-          flatpak-builder --user --gpg-sign=gmankab@gmail.com --install-deps-from=flathub --repo=repo ./build '${{ matrix.flatpak.name }}/${{ matrix.flatpak.id }}.yml'
+          flatpak-builder --disable-rofiles-fuse --user --gpg-sign=gmankab@gmail.com --install-deps-from=flathub --repo=repo ./build '${{ matrix.flatpak.name }}/${{ matrix.flatpak.id }}.yml'
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
