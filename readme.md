@@ -45,8 +45,8 @@ flatpak install pocketblue io.github.pocketblue.handyfox
 
 ### what is mobile config?
 
-- that's a config that makes firefox usable on phones
-- it works only in portrait mode, while in landscape mode it does nothing
+- a config that makes firefox usable on phones, tablets are unaffected
+- works only in portrait mode, landskape remains unchanged
 - see https://gitlab.postmarketos.org/postmarketOS/mobile-config-firefox
 
 ### flatpak manifests
