@@ -1,8 +1,24 @@
 on:
-  workflow_call: {}
+  workflow_dispatch: {}
 jobs:
-  deploy_repo:
+  flatpak-build:
+    secrets: inherit
+    strategy:
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        flatpak:
+          - name: handyfox
+            id: io.github.pocketblue.handyfox
+          - name: firefox-systemconfig
+            id: org.mozilla.firefox.systemconfig
+    uses: ./.github/workflows/helper-flatpak-builder.yml
+    with:
+      runner: ${{ matrix.runner}}
+      name: ${{ matrix.flatpak.name }}
+      id: ${{ matrix.flatpak.id }}
+  push_repo:
     runs-on: ubuntu-latest
+    needs: flatpak-build
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:freedesktop-24.08
       options: --privileged
@@ -30,10 +46,21 @@ jobs:
       - name: deploy to separate branch
         run: |
           TEMP_DIR=$(mktemp -d)
-          cp -a ./repo/* $TEMP_DIR/
+          git config --global --add safe.directory "$(pwd)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cp -a ./deploy/* $TEMP_DIR/
           git checkout --orphan storage-repo
-          git rm -rf .
+          find . -maxdepth 1 -mindepth 1 -not -path './.git' -exec rm -rf {} +
           cp -a $TEMP_DIR/* .
           git add .
           git commit -m "Deploy flatpak repo"
           git push origin storage-repo --force
+  publish:
+    needs: push_repo
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    secrets: inherit
+    uses: ./.github/workflows/deploy.yml
