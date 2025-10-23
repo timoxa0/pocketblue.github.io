@@ -26,7 +26,7 @@ jobs:
             touch $dir/refs/remotes/.gitkeep $dir/refs/mirrors/.gitkeep
             ostree --repo=./deploy/repo pull-local $dir
           done
-          flatpak build-update-repo --gpg-sign=gmankab@gmail.com ./deploy/repo
+          flatpak build-update-repo --gpg-sign='${{ vars.gpg_email }}' ./deploy/repo
       - name: deploy to github pages
         uses: peaceiris/actions-gh-pages@v4
         with:

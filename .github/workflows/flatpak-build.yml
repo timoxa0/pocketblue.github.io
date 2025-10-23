@@ -24,7 +24,7 @@ jobs:
           echo '${{ secrets.private_gpg }}' | gpg --import
           git clone 'https://github.com/pocketblue/${{ inputs.name }}'
           flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-          flatpak-builder --disable-rofiles-fuse --user --gpg-sign=gmankab@gmail.com --install-deps-from=flathub --repo=repo ./build '${{ inputs.name }}/${{ inputs.id }}.yml'
+          flatpak-builder --disable-rofiles-fuse --user --gpg-sign='${{ vars.gpg_email }}' --install-deps-from=flathub --repo=repo ./build '${{ inputs.name }}/${{ inputs.id }}.yml'
       - name: arch
         id: arch
         run: echo arch=$(uname -m) >> $GITHUB_OUTPUT
