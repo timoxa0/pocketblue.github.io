@@ -27,9 +27,13 @@ jobs:
             ostree --repo=./deploy/repo pull-local $dir
           done
           flatpak build-update-repo --gpg-sign='${{ vars.gpg_email }}' ./deploy/repo
-      - name: deploy to github pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./deploy
-          force_orphan: true
+      - name: deploy to separate branch
+        run: |
+          TEMP_DIR=$(mktemp -d)
+          cp -a ./repo/* $TEMP_DIR/
+          git checkout --orphan storage-repo
+          git rm -rf .
+          cp -a $TEMP_DIR/* .
+          git add .
+          git commit -m "Deploy flatpak repo"
+          git push origin storage-repo --force
